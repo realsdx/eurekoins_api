@@ -1,0 +1,132 @@
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.utils import timezone
+from api.models import ApiUser, Transaction, Coupon
+
+from random import randint
+from decouple import config
+from hashlib import sha1
+
+
+SECRET_AUTH_TOKEN = config('TOKEN')
+
+def gen_invite_code(name, email):
+    code = ""
+    for x in name.split(" "):
+        code += x[0]
+    code += str(randint(100,999))
+    usr = ApiUser.objects.get(email=email)
+    code = "ARHN"+code+str(usr.pk)
+    return code
+
+def gen_token(email):
+    token = sha1(str(email)+SECRET_AUTH_TOKEN.encode())
+    return token.hexdigest()
+
+def transfer_coin(request):
+    if request.method == "GET":
+        token = request.GET.get('token')
+        rcv_email = request.GET.get('email')
+        amount = int(request.GET.get('amount'))
+    
+        if token and (rcv_email and amount):
+            sender = ApiUser.objects.get(token=token)
+            receiver = ApiUser.objects.get(email=rcv_email)
+
+            if not sender:
+                return JsonResponse({'status': '1'}) # No sender
+            if not receiver:
+                return JsonResponse({'status': '2'}) # No receiver
+            
+            if sender.coins < amount:
+                return JsonResponse({'status': '3'}) # Insufficient balance
+
+            if amount <=0 :
+                return JsonResponse({'status': '4'}) # Not valid amount
+            if sender == receiver:
+                return JsonResponse({'status': '5'}) # Not valid
+
+            # Valid data
+            sender.coins -= amount
+            receiver.coins += amount
+            sender.save()
+            receiver.save()
+            # log transaction
+            t = Transaction(amount=amount, sender=sender, receiver=receiver, created_at=timezone.now(), msg="USER_TRANSFER")
+            t.save()
+            
+            return JsonResponse({'status': '0'}) # valid
+    
+    return JsonResponse({'status':'-1'}) # Error
+
+
+def register_user(request):
+    if request.method == "GET":
+        email = request.GET.get('email')
+        name = request.GET.get('name')
+        refered_invite_code = request.GET.get('refered_invite_code')
+        
+        # if not (email and name):
+        #     return JsonResponse({'status': })
+        if ApiUser.objects.filter(email=email).exists():
+            return JsonResponse({'status': '1' }) # Email already exists
+
+        # create a new user
+        new_user = ApiUser(name=name, email=email, invite_code=gen_invite_code(name, email))
+        new_user.token = gen_token(email)
+
+        refered_by = ApiUser.objects.get(invite_code=refered_invite_code)
+        if refered_by:
+            # if refered then referer gets +50
+            refered_by.coins += 50
+            refered_by.save()
+
+            new_user.refered_invite_code = refered_invite_code
+
+            # log transaction
+            admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
+            t = Transaction(amount=50, sender=admin_user, receiver=refered_by, created_at=timezone.now(), msg="REFERAL")
+            t.save()
+
+        new_user.coins = 50
+        new_user.save()
+
+        return JsonResponse({'status': '0'}) # Succesfully registered
+    
+    return JsonResponse({'status': '3'}) # error
+
+
+def check_user_exists(request):
+    token = request.GET.get('token')
+    if token:
+        if ApiUser.objects.filter(token=token).exists():
+            return JsonResponse({'status': '1'})
+
+    return JsonResponse({'status': '0'})
+
+def get_coins(request):
+    token = request.GET.get('token')
+    if token:
+        user = ApiUser.objects.get(token=token)
+        if user:
+            return JsonResponse({'status': '0', 'coins': user.coins})
+    return JsonResponse({'status': '1'})
+
+def get_invite_code(request):
+    token = request.GET.get('token')
+    if token:
+        user = ApiUser.objects.get(token=token)
+        if user:
+            return JsonResponse({'status': '0', 'invite_code': user.invite_code})
+    return JsonResponse({'status': '1'})
+
+def get_user_list(request):
+    pattern = request.GET.get('pattern')
+    if pattern:
+        users = ApiUser.objects.filter(name__icontains=pattern)
+        res_users = []
+        for user in users:
+            res_users.append([user.name, user.email])
+        
+        return JsonResponse({'status':'0', 'users': res_users})
+    return JsonResponse({'status': '1'})
