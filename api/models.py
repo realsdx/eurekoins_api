@@ -2,6 +2,17 @@ from django.db import models
 from datetime import datetime
 
 
+class Coupon(models.Model):
+    code = models.CharField(max_length=32)
+    amount = models.IntegerField()
+    one_time = models.BooleanField(default=True)
+    start_time = models.DateTimeField(default=datetime.now)
+    end_time = models.DateTimeField(default=datetime.now)
+
+    def __str__(self):
+        return self.code
+
+
 class ApiUser(models.Model):
     name = models.CharField(max_length=512)
     email = models.EmailField(unique=True)
@@ -12,18 +23,10 @@ class ApiUser(models.Model):
     cupons_used = models.CharField(max_length=1024, blank=True, null=True) # store as list of strings
     token = models.CharField(max_length=1024, unique=True)
 
+    coupons_used = models.ManyToManyField(Coupon, blank=True, related_name="coupons")
+
     def __str__(self):
         return self.email
-
-class Coupon(models.Model):
-    code = models.CharField(max_length=32)
-    amount = models.IntegerField()
-    one_time = models.BooleanField(default=True)
-    start_time = models.DateTimeField(default=datetime.now)
-    end_time = models.DateTimeField(default=datetime.now)
-
-    def __str__(self):
-        return self.code
 
 
 class Transaction(models.Model):
