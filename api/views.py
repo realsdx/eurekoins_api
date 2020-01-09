@@ -1,11 +1,13 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
 from api.models import ApiUser, Transaction, Coupon
 
-from random import randint
+from random import randint, choices
 from decouple import config
 from hashlib import sha1
+import string, datetime
 
 
 SECRET_AUTH_TOKEN = config('TOKEN')
@@ -163,3 +165,34 @@ def get_user_list(request):
         
         return JsonResponse({'status':'0', 'users': res_users})
     return JsonResponse({'status': '1'})
+
+
+# Admin views
+@staff_member_required
+def coupon_manager(request):
+    coupons = Coupon.objects.all()
+    total_count = len(coupons)
+    active_count = 0
+    total_value = 0
+    for c in coupons:
+        total_value += c.amount
+        if c.is_active:
+            active_count += 1
+    
+    ctx = {'total':total_count, 'active':active_count, 'value':total_value}
+
+    return render(request, 'api/coupon_manager.html', ctx)
+
+@staff_member_required
+def add_coupon(request):
+    n = int(request.GET.get('number', 5))
+    mins = int(request.GET.get('mins', 360))
+    amount = int(request.GET.get('amount', 25))
+    for c in range(len(n)):
+        x = ''.join(choices(string.ascii_letters + string.digits, k=8))
+        code = x.upper()
+        end = timezone.now()+datetime.timedelta(minutes=mins)
+        c = Coupon(code=code, amount=amount, start_time=timezone.now(), end_time=end)
+        c.save()
+
+    return HttpResponseRedirect('/api/coupon_manager/', {})
