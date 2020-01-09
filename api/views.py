@@ -23,6 +23,38 @@ def gen_token(email):
     token = sha1(str(email)+SECRET_AUTH_TOKEN.encode())
     return token.hexdigest()
 
+def redeem_coupon(request):
+    token = request.GET.get('token')
+    code = request.GET.get('code')
+    if token and code:
+        user = ApiUser.objects.get(token=token)
+        if user:
+            coupon = Coupon.objects.get(code=code)
+            if coupon:
+                if not coupon.is_active:
+                    return JsonResponse({'status': '4'}) # Coupon expired
+                
+                # TODO: Check it
+                if user in coupon.users.all():
+                    return JsonResponse({'status': '3'}) # Coupon already used by user
+
+                # Valid redeem
+                user.coins += coupon.amount
+                user.coupons_used.add(coupon)
+                coupon.use_count += 1
+                coupon.save()
+                user.save()
+
+                # log transaction
+                admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
+                t = Transaction(amount=coupon.amount, sender=admin_user, receiver=user, created_at=timezone.now(), msg="COUPON_REDEEM")
+                t.save()
+                return JsonResponse({'status': '0', 'invite_code': user.invite_code})
+            else:
+                return JsonResponse({'status': '2'}) # No such coupon
+        else:
+            return JsonResponse({'status': '1'}) # No such user
+
 def transfer_coin(request):
     if request.method == "GET":
         token = request.GET.get('token')
@@ -66,8 +98,9 @@ def register_user(request):
         name = request.GET.get('name')
         refered_invite_code = request.GET.get('refered_invite_code')
         
-        # if not (email and name):
-        #     return JsonResponse({'status': })
+        if not (email and name):
+            return JsonResponse({'status': '-1' }) # invalid parameters
+        
         if ApiUser.objects.filter(email=email).exists():
             return JsonResponse({'status': '1' }) # Email already exists
 
