@@ -19,3 +19,4 @@ python3 manage.py migrate
 python3 manage.py collectstatic
 python3 manage.py runserver
 ```
+*This is a Python port of the original [RoR based app](https://github.com/divyanshumehta/eurekoins-api)*
