@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
 from api.models import ApiUser, Transaction, Coupon
@@ -188,7 +188,7 @@ def add_coupon(request):
     n = int(request.GET.get('number', 5))
     mins = int(request.GET.get('mins', 360))
     amount = int(request.GET.get('amount', 25))
-    for c in range(len(n)):
+    for c in range(n):
         x = ''.join(choices(string.ascii_letters + string.digits, k=8))
         code = x.upper()
         end = timezone.now()+datetime.timedelta(minutes=mins)
@@ -196,3 +196,9 @@ def add_coupon(request):
         c.save()
 
     return HttpResponseRedirect('/api/coupon_manager/', {})
+
+@staff_member_required
+def export_coupons(request):
+    response = HttpResponse(content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="coupons.txt"'
+    return response
