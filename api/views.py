@@ -20,8 +20,8 @@ def gen_invite_code(name, email):
     for x in name.split(" "):
         code += x[0]
     code += str(randint(100,999))
-    usr = ApiUser.objects.get(email=email)
-    code = "ARHN"+code+str(usr.pk)
+    x = ''.join(choices(string.ascii_letters + string.digits, k=5))
+    code = "ARHN"+code+x
     return code
 
 def gen_token(email):
