@@ -199,6 +199,11 @@ def add_coupon(request):
 
 @staff_member_required
 def export_coupons(request):
-    response = HttpResponse(content_type='text/plain')
+    coupons = Coupon.objects.all()
+    content = ""
+    for c in coupons:
+        content += (c.code+"\n")
+    
+    response = HttpResponse(content, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="coupons.txt"'
     return response
