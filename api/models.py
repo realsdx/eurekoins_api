@@ -55,4 +55,4 @@ class Transaction(models.Model):
     is_in_game = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.amount
+        return str(self.amount)
