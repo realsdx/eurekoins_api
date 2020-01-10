@@ -38,7 +38,6 @@ class ApiUser(models.Model):
     invite_code = models.CharField(max_length=16, unique=True)
     refered_invite_code = models.CharField(max_length=16, blank=True, null=True)
     image = models.URLField(blank=True, null=True) 
-    # cupons_used = models.CharField(max_length=1024, blank=True, null=True) # store as list of strings
     token = models.CharField(max_length=1024, unique=True)
 
     coupons_used = models.ManyToManyField(Coupon, blank=True, related_name="users")
