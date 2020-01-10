@@ -64,7 +64,7 @@ def transfer_coin(request):
     if request.method == "GET":
         token = request.GET.get('token')
         rcv_email = request.GET.get('email')
-        amount = int(request.GET.get('amount'))
+        amount = int(request.GET.get('amount', 0))
     
         if token and (rcv_email and amount):
             sender = ApiUser.objects.filter(token=token).first()
