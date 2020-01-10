@@ -54,7 +54,7 @@ def redeem_coupon(request):
                 admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
                 t = Transaction(amount=coupon.amount, sender=admin_user, receiver=user, created_at=timezone.now(), msg="COUPON_REDEEM")
                 t.save()
-                return JsonResponse({'status': '0', 'invite_code': user.invite_code})
+                return JsonResponse({'status': '0', 'invite_code': user.invite_code}) # successfull
             else:
                 return JsonResponse({'status': '2'}) # No such coupon
         else:
@@ -67,8 +67,8 @@ def transfer_coin(request):
         amount = int(request.GET.get('amount'))
     
         if token and (rcv_email and amount):
-            sender = ApiUser.objects.get(token=token)
-            receiver = ApiUser.objects.get(email=rcv_email)
+            sender = ApiUser.objects.filter(token=token).first()
+            receiver = ApiUser.objects.filter(email=rcv_email).first()
 
             if not sender:
                 return JsonResponse({'status': '1'}) # No sender
