@@ -20,7 +20,7 @@ python3 manage.py collectstatic
 python3 manage.py runserver
 ```
 ### To run the project in development mode
-_Postgreql not required_
+_PostgreSQL not required_
 
 Then `cp .env.example .env` and change `.env` file according to your need.
 
