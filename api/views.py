@@ -54,7 +54,7 @@ def redeem_coupon(request):
                 admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
                 t = Transaction(amount=coupon.amount, sender=admin_user, receiver=user, created_at=timezone.now(), msg="COUPON_REDEEM")
                 t.save()
-                return JsonResponse({'status': '0', 'invite_code': user.invite_code}) # successfull
+                return JsonResponse({'status': '0'}) # successfull
             else:
                 return JsonResponse({'status': '2'}) # No such coupon
         else:
