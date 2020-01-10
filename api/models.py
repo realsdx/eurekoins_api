@@ -37,7 +37,7 @@ class ApiUser(models.Model):
     coins = models.PositiveIntegerField(default=0)
     invite_code = models.CharField(max_length=16, unique=True)
     refered_invite_code = models.CharField(max_length=16, blank=True, null=True)
-    image = models.ImageField(blank=True, null=True) 
+    image = models.URLField(blank=True, null=True) 
     # cupons_used = models.CharField(max_length=1024, blank=True, null=True) # store as list of strings
     token = models.CharField(max_length=1024, unique=True)
 
