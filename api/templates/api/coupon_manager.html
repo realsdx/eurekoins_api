@@ -12,11 +12,32 @@
 
 <body>
     <div class="container">
-        <p>Coupons :{{ total }} </p> 
-        <p>Total Active :{{ active }}</p>
-        <p>Total Value :{{ value }}</p>
+        <header class="container">
+            <h1>Coupon Manager</h1>
+        </header>
+        <div class="container stats m-4 card">
+            <div class="card-header">
+                Stats
+            </div>
+            <div class="card-body">
+                <p>Coupons :{{ total }} </p>
+                <p>Total Active :{{ active }}</p>
+                <p>Total Value :{{ value }}</p>
+            </div>
+        </div>
+        <div class="container add m-4 form-group" >
+            <h2>Add new coupons</h2>
+            <form action="/api/coupon_manager/add/" method="GET">
+                <input type="text" class="form-control mb-2" placeholder="Enter number of coupons" name="number">
+                <input type="text" class="form-control mb-2" placeholder="Enter amount" name="amount">
+                <input type="text" class="form-control mb-2" placeholder="Enter duration (in mins)" name="mins">
+                <button type="submit" class="btn btn-primary" >Add Coupon</button>
+            </form>
+        </div>
+        <div class="container mt-4">
+            <button><a href="/api/coupon_manager/export/">Export as text</a></button>
+        </div>
     </div>
-    
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
