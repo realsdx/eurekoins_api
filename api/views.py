@@ -12,6 +12,9 @@ import string, datetime
 
 SECRET_AUTH_TOKEN = config('TOKEN')
 
+def index(request):
+    return render(request, 'api/index.html',{})
+
 def gen_invite_code(name, email):
     code = ""
     for x in name.split(" "):
