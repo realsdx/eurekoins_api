@@ -101,6 +101,7 @@ def register_user(request):
     if request.method == "GET":
         email = request.GET.get('email')
         name = request.GET.get('name')
+        image = request.GET.get('image')
         refered_invite_code = request.GET.get('refered_invite_code')
         
         if not (email and name):
@@ -110,7 +111,7 @@ def register_user(request):
             return JsonResponse({'status': '1' }) # Email already exists
 
         # create a new user
-        new_user = ApiUser(name=name, email=email, invite_code=gen_invite_code(name, email))
+        new_user = ApiUser(name=name, email=email, image=image, invite_code=gen_invite_code(name, email))
         new_user.token = gen_token(email)
 
         refered_by = ApiUser.objects.get(invite_code=refered_invite_code)
@@ -164,7 +165,7 @@ def get_user_list(request):
         users = ApiUser.objects.filter(name__icontains=pattern)
         res_users = []
         for user in users:
-            res_users.append([user.name, user.email])
+            res_users.append([user.name, user.email, user.image])
         
         return JsonResponse({'status':'0', 'users': res_users})
     return JsonResponse({'status': '1'})
