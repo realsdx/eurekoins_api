@@ -49,7 +49,7 @@ class ApiUser(models.Model):
 class Transaction(models.Model):
     amount = models.IntegerField()
     sender = models.ForeignKey(ApiUser, on_delete=models.CASCADE)
-    recevier = models.ForeignKey(ApiUser, on_delete=models.CASCADE, related_name="receiver_user")
+    receiver = models.ForeignKey(ApiUser, on_delete=models.CASCADE, related_name="receiver_user")
     created_at = models.DateTimeField()
     msg = models.CharField(max_length=512, blank=True, null=True) # for what
     is_in_game = models.BooleanField(default=False)
