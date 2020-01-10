@@ -114,7 +114,7 @@ def register_user(request):
         new_user = ApiUser(name=name, email=email, image=image, invite_code=gen_invite_code(name, email))
         new_user.token = gen_token(email)
 
-        refered_by = ApiUser.objects.get(invite_code=refered_invite_code)
+        refered_by = ApiUser.objects.filter(invite_code=refered_invite_code).first()
         if refered_by:
             # if refered then referer gets +50
             refered_by.coins += 50
@@ -146,7 +146,7 @@ def check_user_exists(request):
 def get_coins(request):
     token = request.GET.get('token')
     if token:
-        user = ApiUser.objects.get(token=token)
+        user = ApiUser.objects.filter(token=token).first()
         if user:
             return JsonResponse({'status': '0', 'coins': user.coins})
     return JsonResponse({'status': '1'})
@@ -154,7 +154,7 @@ def get_coins(request):
 def get_invite_code(request):
     token = request.GET.get('token')
     if token:
-        user = ApiUser.objects.get(token=token)
+        user = ApiUser.objects.filter(token=token).first()
         if user:
             return JsonResponse({'status': '0', 'invite_code': user.invite_code})
     return JsonResponse({'status': '1'})
