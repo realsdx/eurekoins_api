@@ -32,9 +32,9 @@ def redeem_coupon(request):
     token = request.GET.get('token')
     code = request.GET.get('code')
     if token and code:
-        user = ApiUser.objects.get(token=token)
+        user = ApiUser.objects.filter(token=token).first()
         if user:
-            coupon = Coupon.objects.get(code=code)
+            coupon = Coupon.objects.filter(code=code).first()
             if coupon:
                 if not coupon.is_active:
                     return JsonResponse({'status': '4'}) # Coupon expired
