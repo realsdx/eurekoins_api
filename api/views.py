@@ -25,7 +25,7 @@ def gen_invite_code(name, email):
     return code
 
 def gen_token(email):
-    token = sha1(str(email)+SECRET_AUTH_TOKEN.encode())
+    token = sha1((str(email)+SECRET_AUTH_TOKEN).encode())
     return token.hexdigest()
 
 def redeem_coupon(request):
