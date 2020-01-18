@@ -188,6 +188,8 @@ def get_transaction_history(request):
                 time = o.created_at
                 trns.append([amount, i.receiver.email, time])
 
+            trns = sorted(trns, key=lambda x: x[2])
+
             return JsonResponse({'status': '0', 'history': trns})
     return JsonResponse({'status': '1'})    
 
