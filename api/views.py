@@ -170,6 +170,27 @@ def get_user_list(request):
         return JsonResponse({'status':'0', 'users': res_users})
     return JsonResponse({'status': '1'})
 
+def get_transaction_history(request):
+    token = request.GET.get('token')
+    if token:
+        user = ApiUser.objects.filter(token=token).first()
+        if user:
+            incoming = Transaction.objects.filter(receiver=user)
+            outgoing = Transaction.objects.filter(sender=user)
+            trns = []
+            for i in incoming:
+                amount = i.amount
+                time = i.created_at
+                trns.append([amount, i.sender.email, time])
+
+            for o in outgoing:
+                amount = -o.amount
+                time = o.created_at
+                trns.append([amount, i.receiver.email, time])
+
+            return JsonResponse({'status': '0', 'history': trns})
+    return JsonResponse({'status': '1'})    
+
 
 # Admin views
 @staff_member_required
