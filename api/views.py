@@ -186,9 +186,9 @@ def get_transaction_history(request):
             for o in outgoing:
                 amount = -o.amount
                 time = o.created_at
-                trns.append([amount, i.receiver.email, time])
+                trns.append([amount, o.receiver.email, time])
 
-            trns = sorted(trns, key=lambda x: x[2])
+            trns = sorted(trns, key=lambda x: x[2], reversed=True)
 
             return JsonResponse({'status': '0', 'history': trns})
     return JsonResponse({'status': '1'})    
