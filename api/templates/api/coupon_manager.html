@@ -35,7 +35,13 @@
             </form>
         </div>
         <div class="container mt-4">
-            <button><a href="/api/coupon_manager/export/">Export as text</a></button>
+            <h2>Export Active Coupons</h2>
+            <form action="/api/coupon_manager/export/" method="get">
+                <input type="text" class="form-control mb-2" value="50" placeholder="Enter filter amount" name="amount">
+                <input type="checkbox" class="mb-2" value="multi" name="multiuse"> Multiuse Coupons </br>
+                <button class="mb-5" type="submit">Export as file</button>
+            </form>
+            
         </div>
     </div>
 

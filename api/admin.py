@@ -5,7 +5,7 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = ['amount','sender','receiver','created_at','msg']
 
 class CouponAdmin(admin.ModelAdmin):
-    list_display = ['code','amount']
+    list_display = ['code','amount','is_active']
 
 class ApiUserAdmin(admin.ModelAdmin):
     list_display = ['email','name','coins']

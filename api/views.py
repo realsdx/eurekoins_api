@@ -226,10 +226,19 @@ def add_coupon(request):
 
 @staff_member_required
 def export_coupons(request):
+    amount = request.GET.get('amount')
     coupons = Coupon.objects.all()
     content = ""
-    for c in coupons:
-        content += (c.code+"\n")
+    if amount:
+        amount = int(amount)
+        for c in coupons:
+            if c.is_active and (c.amount == amount):
+                content += (c.code+"\n")
+    else:
+        for c in coupons:
+            if c.is_active:
+                content += (c.code+"\n")
+    
     
     response = HttpResponse(content, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="coupons.txt"'
