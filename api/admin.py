@@ -3,7 +3,7 @@ from api.models import ApiUser, Transaction, Coupon
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ['amount','sender','receiver','created_at','msg']
-    search_fields = ['receiver', 'sender']
+    search_fields = ['receiver__email', 'sender__email']
 
 class CouponAdmin(admin.ModelAdmin):
     list_display = ['code','amount','is_active']
