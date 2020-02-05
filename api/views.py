@@ -102,7 +102,7 @@ def register_user(request):
         email = request.GET.get('email')
         name = request.GET.get('name')
         image = request.GET.get('image')
-        refered_invite_code = request.GET.get('refered_invite_code')
+        refered_invite_code = request.GET.get('referred_invite_code')
         
         if not (email and name):
             return JsonResponse({'status': '-1' }) # invalid parameters
