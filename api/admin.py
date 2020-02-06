@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import ApiUser, Transaction, Coupon
+from api.models import ApiUser, Transaction, Coupon, Config
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ['amount','sender','receiver','created_at','msg']
@@ -15,3 +15,4 @@ class ApiUserAdmin(admin.ModelAdmin):
 admin.site.register(ApiUser, ApiUserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Coupon, CouponAdmin)
+admin.site.register(Config)
