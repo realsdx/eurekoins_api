@@ -127,6 +127,7 @@ def register_user(request):
         if refered_by:
             # if refered then referer gets +50
             refered_by.coins += 50
+            refered_by.ref_count += 1
             refered_by.save()
 
             new_user.refered_invite_code = refered_invite_code
