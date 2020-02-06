@@ -29,7 +29,7 @@ def gen_token(email):
     return token.hexdigest()
 
 def run_promo(user):
-    if user.ref_count >= 5:
+    if user.ref_count == 5:
         config = Config.objects.all().first()
         curr_time = timezone.now()
         if config.promo_start_time <= curr_time <= config.promo_end_time:
