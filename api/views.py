@@ -34,6 +34,9 @@ def run_promo(user):
         curr_time = timezone.now()
         if config.promo_start_time <= curr_time <= config.promo_end_time:
             user.coins += config.promo_coin_value
+            admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
+            t = Transaction(amount=config.promo_coin_value, sender=admin_user, receiver=user, created_at=timezone.now(), msg="PROMO")
+            t.save()
             user.save()
 
 
