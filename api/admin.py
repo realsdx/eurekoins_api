@@ -9,7 +9,7 @@ class CouponAdmin(admin.ModelAdmin):
     list_display = ['code','amount','is_active']
 
 class ApiUserAdmin(admin.ModelAdmin):
-    list_display = ['email','name','coins']
+    list_display = ['email','name','coins','ref_count']
     search_fields = ['email', 'name']
 
 admin.site.register(ApiUser, ApiUserAdmin)
