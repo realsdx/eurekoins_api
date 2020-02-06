@@ -41,6 +41,7 @@ class ApiUser(models.Model):
     token = models.CharField(max_length=1024, unique=True)
 
     coupons_used = models.ManyToManyField(Coupon, blank=True, related_name="users")
+    ref_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.email
