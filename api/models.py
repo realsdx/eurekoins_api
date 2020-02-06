@@ -57,3 +57,11 @@ class Transaction(models.Model):
 
     def __str__(self):
         return str(self.amount)
+
+class Config(models.Model):
+    promo_start_time = models.DateTimeField(default=timezone.now)
+    promo_end_time = models.DateTimeField(default=timezone.now)
+    promo_coin_value = models.IntegerField(default=50)
+
+    def __str__(self):
+        return "Project Settings"

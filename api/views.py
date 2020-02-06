@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
-from api.models import ApiUser, Transaction, Coupon
+from api.models import ApiUser, Transaction, Coupon, Config
 
 from random import randint, choices
 from decouple import config
@@ -27,6 +27,15 @@ def gen_invite_code(name, email):
 def gen_token(email):
     token = sha1((str(email)+SECRET_AUTH_TOKEN).encode())
     return token.hexdigest()
+
+def run_promo(user):
+    if user.ref_count >= 5:
+        config = Config.objects.all().first()
+        curr_time = timezone.now()
+        if config.promo_start_time <= curr_time <= config.promo_end_time:
+            user.coins += config.promo_coin_value
+            user.save()
+
 
 def redeem_coupon(request):
     token = request.GET.get('token')
@@ -126,6 +135,9 @@ def register_user(request):
             admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
             t = Transaction(amount=50, sender=admin_user, receiver=refered_by, created_at=timezone.now(), msg="REFERAL")
             t.save()
+
+            #TODO: Test it
+            run_promo(refered_by)
 
         new_user.coins = 50
         new_user.save()
