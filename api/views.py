@@ -126,7 +126,7 @@ def register_user(request):
         new_user = ApiUser(name=name, email=email, image=image, invite_code=gen_invite_code(name, email))
         new_user.token = gen_token(email)
 
-        refered_by = ApiUser.objects.filter(invite_code=refered_invite_code).first()
+        refered_by = ApiUser.objects.select_for_update().filter(invite_code=refered_invite_code).first()
         if refered_by:
             new_user.refered_invite_code = refered_invite_code
             new_user.coins = 50
