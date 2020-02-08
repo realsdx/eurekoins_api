@@ -128,12 +128,14 @@ def register_user(request):
 
         refered_by = ApiUser.objects.filter(invite_code=refered_invite_code).first()
         if refered_by:
+            new_user.refered_invite_code = refered_invite_code
+            new_user.coins = 50
+            new_user.save()
+
             # if refered then referer gets +50
             refered_by.coins += 50
             refered_by.ref_count += 1
             refered_by.save()
-
-            new_user.refered_invite_code = refered_invite_code
 
             # log transaction
             admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
@@ -142,9 +144,9 @@ def register_user(request):
 
             #TODO: Test it
             run_promo(refered_by)
-
-        new_user.coins = 50
-        new_user.save()
+        else:
+            new_user.coins = 50
+            new_user.save()
 
         return JsonResponse({'status': '0'}) # Succesfully registered
     
