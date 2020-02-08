@@ -283,7 +283,7 @@ def transfer_eurekoin(request):
 
             # log transaction
             admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
-            t = Transaction(amount=50, sender=admin_user, receiver=receiver, created_at=timezone.now(), msg="ADMIN_TRANSFER")
+            t = Transaction(amount=amount, sender=admin_user, receiver=receiver, created_at=timezone.now(), msg="ADMIN_TRANSFER")
             t.save()
 
             receiver.save()
