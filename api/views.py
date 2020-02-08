@@ -259,3 +259,33 @@ def export_coupons(request):
     response = HttpResponse(content, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="coupons.txt"'
     return response
+
+@staff_member_required
+def transfer_admin(request):
+    total = 0
+    users =  ApiUser.objects.all()
+    for u in users:
+        total += u.coins
+
+    ctx = { 'total_val' : total }
+    return render(request, "api/transfer_coins.html", ctx)
+
+@staff_member_required
+def transfer_eurekoin(request):
+    email = request.GET.get('email', "")
+    amount = int(request.GET.get('amount', 25))
+
+    if email and amount:
+        receiver = ApiUser.objects.filter(email=email).first()
+
+        if receiver:
+            receiver.coins += amount
+
+            # log transaction
+            admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
+            t = Transaction(amount=50, sender=admin_user, receiver=receiver, created_at=timezone.now(), msg="ADMIN_TRANSFER")
+            t.save()
+
+            receiver.save()
+
+    return HttpResponseRedirect('/api/transfer_admin/', {})

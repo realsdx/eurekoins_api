@@ -11,11 +11,22 @@
 
 <body>
     <header class="container">
-       <h1>No, nothing here!</h1>
+        <h1>Admin Links</h1>
+    </header>
+ 
+    {% if request.user.is_staff %}
+    <div class="container">
+        <a href="/api/transfer_admin/">Transfer Eurekoin</a></br>
+        <a href="/api/coupon_manager/">Coupon Manager</a>
+    </div>
+    {% else %}
+    <header class="container">
+        <h1>No, nothing here!</h1>
     </header>
    <div class="container">
         <img src="https://www.chronicle.com/blogs/linguafranca/files/2017/11/Nothing-to-See-15a34a2fc727c8.jpg">
    </div>
+   {% endif %}
 </body>
 
 </html>

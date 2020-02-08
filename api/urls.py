@@ -14,5 +14,7 @@ urlpatterns = [
     path('coupon/', views.redeem_coupon, name="redeem_coupon"),
     path('coupon_manager/', views.coupon_manager, name="coupon_manager"),
     path('coupon_manager/add/', views.add_coupon, name="coupon_add"),
-    path('coupon_manager/export/', views.export_coupons, name="coupon_export")
+    path('coupon_manager/export/', views.export_coupons, name="coupon_export"),
+    path('transfer_admin/', views.transfer_admin, name="transfer_admin"),
+    path('transfer_eurekoin/', views.transfer_eurekoin, name="transfer_eurekoin")
 ]
