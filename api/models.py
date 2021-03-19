@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from datetime import datetime
+import uuid
 
 
 class Coupon(models.Model):
@@ -31,6 +32,19 @@ class Coupon(models.Model):
         return False
 
 
+class KoinPartner(models.Model):
+    """Koin Partners are entities who are partners of the Eurokoin program.
+    If an users registers for someting in partner app, they can be rewarded with eurokoins
+    """
+    partner_name = models.CharField(max_length=256)
+    partner_email = models.EmailField(help_text="For transaction log only")
+    partner_uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    koin_amount = models.IntegerField(default=0, help_text="Amount to be rewarded")
+
+    def __str__(self):
+        return self.partner_name
+
+
 class ApiUser(models.Model):
     name = models.CharField(max_length=512)
     email = models.EmailField(unique=True)
@@ -41,6 +55,7 @@ class ApiUser(models.Model):
     token = models.CharField(max_length=1024, unique=True)
 
     coupons_used = models.ManyToManyField(Coupon, blank=True, related_name="users")
+    partners_registerd = models.ManyToManyField(KoinPartner, blank=True, related_name="users_registered")
     ref_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
-from api.models import ApiUser, Transaction, Coupon, Config
+from api.models import ApiUser, Transaction, Coupon, Config, KoinPartner
 
 from random import randint, choices
 from decouple import config
@@ -51,7 +51,7 @@ def redeem_coupon(request):
                 if not coupon.is_active:
                     return JsonResponse({'status': '4'}) # Coupon expired
                 
-                # TODO: Check it
+                # TODO: Unoptimized code! use DB functions
                 if user in coupon.users.all():
                     return JsonResponse({'status': '3'}) # Coupon already used by user
 
@@ -210,6 +210,35 @@ def get_transaction_history(request):
 
             return JsonResponse({'status': '0', 'history': trns})
     return JsonResponse({'status': '1'})    
+
+
+def partner_reward(request):
+    """NOTE: Only Koin endpoint without token auth, as it's not for the app"""
+    partner_uuid = request.GET.get('code')
+    user_email = request.GET.get('email')
+
+    if partner_uuid and user_email:
+        user = ApiUser.objects.filter(email=user_email).first()
+        partner = KoinPartner.objects.filter(partner_uuid=partner_uuid).first()
+        if user and partner:
+            if user in partner.users_registered.all():
+                return JsonResponse({'message': 'Koins already redeemed by the user'})
+            
+            # Valid redeem
+            user.coins += partner.koin_amount
+            user.partners_registerd.add(partner)
+            user.save()
+
+            # log transaction
+            admin_user = ApiUser.objects.filter(email=partner.email).first()
+            t = Transaction(amount=coupon.amount, sender=admin_user, receiver=user, created_at=timezone.now(), msg="PARTNER_REDEEM")
+            t.save()
+            return JsonResponse({'status': '0', 'message' : 'Successfully Redeemed'}) # successfull
+        else:
+            return JsonResponse({'message' : 'User E-mail or Partner Code not valid'})
+    else:
+        return JsonResponse({'message': 'Parnter'})
+
 
 
 # Admin views
