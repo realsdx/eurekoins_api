@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeaderBoard</title>
+    <link rel="stylesheet" href="{% static 'css/leaderboard.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200" rel="stylesheet">
+</head>
+
+<body background="{% static 'img/bg.jpg' %}">
+    <h2 class="glow">
+        <span class="main-text skew">EUREKOIN LEADERBOARD
+            <span class="back-text glitch">EUREKOIN LEADERBOARD</span>
+        </span>
+    </h2>
+    <div class="center">
+        <div class="top3">
+            {% for player in first_three %}
+            {% if forloop.counter == 2 %}
+            <div class="two item">
+                <div class="pos">
+                    {{ forloop.counter }}
+                </div>
+                <div class="pic" style="background-image: url('{{ player.image }}')">
+                </div>
+                <div class="name">
+                    {{ player.name }}
+                </div>
+                <div class="score">
+                    {{ player.coins }}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% for player in first_three %}
+            {% if forloop.counter == 1 %}
+            <div class="one item">
+                <div class="pos">
+                    {{ forloop.counter }}
+                </div>
+                <div class="pic" style="background-image: url('{{ player.image }}')">
+                </div>
+                <div class="name">
+                    {{ player.name }}
+                </div>
+                <div class="score">
+                    {{ player.coins }}
+                </div>
+            </div>
+            {% elif forloop.counter == 3 %}
+            <div class="three item">
+                <div class="pos">
+                    {{ forloop.counter }}
+                </div>
+                <div class="pic" style="background-image: url('{{ player.image }}')">
+                </div>
+                <div class="name">
+                    {{ player.name }}
+                </div>
+                <div class="score">
+                    {{ player.coins }}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="list">
+            {% for rest in rest %}
+            <div class="item">
+                <div class="pos">
+                    {{ forloop.counter | add:"3" }}
+                </div>
+                <div class="pic" style="background-image: url('{{ rest.image }}')">
+                </div>
+                <div class="name">
+                    {{ rest.name }}
+                </div>
+                <div class="score">
+                    {{ rest.coins }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+</body>
+
+</html>

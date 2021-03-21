@@ -239,7 +239,9 @@ def partner_reward(request):
     else:
         return JsonResponse({'message': 'Parnter'})
 
-
+def leaderboard(request):
+    users = ApiUser.objects.all().order_by('-coins','pk')
+    return render(request, "api/leaderboard.html", {'first_three': users[:3], 'rest': users[3:]})
 
 # Admin views
 @staff_member_required
