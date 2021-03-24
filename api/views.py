@@ -246,10 +246,14 @@ def leaderboard(request):
 def leaderboard_api(request):
     users = ApiUser.objects.all().order_by('-coins','pk')
     users = users[:10]
-    resp = {}
+    resp = []
     for user in users:
-        resp[user.name] = user.coins
-    return JsonResponse(resp)
+        temp = {}
+        temp['username'] = user.name
+        temp['coins'] = user.coins
+        temp['imageURL'] = user.image
+        resp.append(temp)
+    return JsonResponse(resp, safe=False)
     
 # Admin views
 @staff_member_required
