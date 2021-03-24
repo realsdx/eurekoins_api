@@ -17,11 +17,11 @@ def index(request):
 
 def gen_invite_code(name, email):
     code = ""
-    for x in name.split(" "):
-        code += x[0]
-    code += str(randint(100,999))
-    x = ''.join(choices(string.ascii_letters + string.digits, k=5))
-    code = "ARHN"+code+x
+    name = name.split(" ")
+    code += name[0][0].upper()
+    code += name[-1][0].upper()
+    code += str(randint(1000,9999))
+    code = "ARHN"+code
     return code
 
 def gen_token(email):
