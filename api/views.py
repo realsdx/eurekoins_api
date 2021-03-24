@@ -7,7 +7,7 @@ from api.models import ApiUser, Transaction, Coupon, Config, KoinPartner
 from random import randint, choices
 from decouple import config
 from hashlib import sha1
-import string, datetime
+import string, datetime, json
 
 
 SECRET_AUTH_TOKEN = config('TOKEN')
@@ -243,6 +243,14 @@ def leaderboard(request):
     users = ApiUser.objects.all().order_by('-coins','pk')
     return render(request, "api/leaderboard.html", {'first_three': users[:3], 'rest': users[3:]})
 
+def leaderboard_api(request):
+    users = ApiUser.objects.all().order_by('-coins','pk')
+    users = users[:10]
+    resp = {}
+    for user in users:
+        resp[user.name] = user.coins
+    return JsonResponse(resp)
+    
 # Admin views
 @staff_member_required
 def coupon_manager(request):
