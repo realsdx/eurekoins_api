@@ -18,4 +18,5 @@ urlpatterns = [
     path('transfer_admin/', views.transfer_admin, name="transfer_admin"),
     path('transfer_eurekoin/', views.transfer_eurekoin, name="transfer_eurekoin"),
     path('partner/reward/', views.partner_reward, name="partner_reward"),
+    path('leaderboard/', views.leaderboard_api, name="leaderbaord_api"),
 ]
