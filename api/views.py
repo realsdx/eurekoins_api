@@ -34,7 +34,7 @@ def run_promo(user):
         curr_time = timezone.now()
         if config.promo_start_time <= curr_time <= config.promo_end_time:
             user.coins += config.promo_coin_value
-            admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
+            admin_user = ApiUser.objects.filter(email="eurekoin@nitdgplug.org").first()
             t = Transaction(amount=config.promo_coin_value, sender=admin_user, receiver=user, created_at=timezone.now(), msg="PROMO")
             t.save()
             user.save()
@@ -63,7 +63,7 @@ def redeem_coupon(request):
                 user.save()
 
                 # log transaction
-                admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
+                admin_user = ApiUser.objects.filter(email="eurekoin@nitdgplug.org").first()
                 t = Transaction(amount=coupon.amount, sender=admin_user, receiver=user, created_at=timezone.now(), msg="COUPON_REDEEM")
                 t.save()
                 return JsonResponse({'status': '0'}) # successfull
@@ -138,7 +138,7 @@ def register_user(request):
             refered_by.save()
 
             # log transaction
-            admin_user = ApiUser.objects.filter(email="avskr@admin.com").first()
+            admin_user = ApiUser.objects.filter(email="eurekoin@nitdgplug.org").first()
             t = Transaction(amount=50, sender=admin_user, receiver=refered_by, created_at=timezone.now(), msg="REFERAL")
             t.save()
 
