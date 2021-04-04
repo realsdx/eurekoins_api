@@ -80,3 +80,9 @@ class Config(models.Model):
 
     def __str__(self):
         return "Project Settings"
+
+class FreezeTime(models.Model):
+    freeze_time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return "Freeze Time"

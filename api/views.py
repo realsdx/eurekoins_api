@@ -2,8 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
-from api.models import ApiUser, Transaction, Coupon, Config, KoinPartner
-
+from api.models import ApiUser, Transaction, Coupon, Config, KoinPartner, FreezeTime
 from random import randint, choices
 from decouple import config
 from hashlib import sha1
@@ -11,6 +10,15 @@ import string, datetime, json
 
 
 SECRET_AUTH_TOKEN = config('TOKEN')
+
+curr_leaderboard = None
+
+def update_leaderboard():
+    global curr_leaderboard
+    if timezone.now() <= FreezeTime.objects.all().first().freeze_time:
+        print('this ran')
+        curr_leaderboard = ApiUser.objects.all().order_by('-coins','pk')
+    return curr_leaderboard
 
 def index(request):
     return render(request, 'api/index.html',{})
@@ -240,11 +248,15 @@ def partner_reward(request):
         return JsonResponse({'message': 'Parnter'})
 
 def leaderboard(request):
-    users = ApiUser.objects.all().order_by('-coins','pk')
+    users = update_leaderboard()
+    for index, user in enumerate(users):
+        print(index, user.coins)
     return render(request, "api/leaderboard.html", {'first_three': users[:3], 'rest': users[3:]})
 
 def leaderboard_api(request):
-    users = ApiUser.objects.all().order_by('-coins','pk')
+    users = update_leaderboard()
+    for index, user in enumerate(users):
+        print(index, user.coins)
     users = users[:10]
     resp = []
     for user in users:
