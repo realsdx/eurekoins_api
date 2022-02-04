@@ -11,15 +11,6 @@ import string, datetime, json
 
 SECRET_AUTH_TOKEN = config('TOKEN')
 
-curr_leaderboard = None
-
-def update_leaderboard():
-    global curr_leaderboard
-    if timezone.now() <= FreezeTime.objects.all().first().freeze_time:
-        print('this ran')
-        curr_leaderboard = ApiUser.objects.all().order_by('-coins','pk')
-    return curr_leaderboard
-
 def index(request):
     return render(request, 'api/index.html',{})
 
@@ -248,21 +239,17 @@ def partner_reward(request):
         return JsonResponse({'message': 'Parnter'})
 
 def leaderboard(request):
-    users = update_leaderboard()
-    for index, user in enumerate(users):
-        print(index, user.coins)
+    users = ApiUser.objects.all().order_by('-coins_before_freeze', 'pk')
     return render(request, "api/leaderboard.html", {'first_three': users[:3], 'rest': users[3:]})
 
 def leaderboard_api(request):
-    users = update_leaderboard()
-    for index, user in enumerate(users):
-        print(index, user.coins)
+    users = ApiUser.objects.all().order_by('-coins_before_freeze', 'pk')
     users = users[:10]
     resp = []
     for user in users:
         temp = {}
         temp['username'] = user.name
-        temp['coins'] = user.coins
+        temp['coins'] = user.coins_before_freeze
         temp['imageURL'] = user.image
         resp.append(temp)
     return JsonResponse(resp, safe=False)

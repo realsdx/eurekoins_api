@@ -31,7 +31,7 @@
                     {{ player.name }}
                 </div>
                 <div class="score">
-                    {{ player.coins }}
+                    {{ player.coins_before_freeze }}
                 </div>
             </div>
             {% endif %}
@@ -48,7 +48,7 @@
                     {{ player.name }}
                 </div>
                 <div class="score">
-                    {{ player.coins }}
+                    {{ player.coins_before_freeze }}
                 </div>
             </div>
             {% elif forloop.counter == 3 %}
@@ -62,7 +62,7 @@
                     {{ player.name }}
                 </div>
                 <div class="score">
-                    {{ player.coins }}
+                    {{ player.coins_before_freeze }}
                 </div>
             </div>
             {% endif %}
@@ -80,7 +80,7 @@
                     {{ rest.name }}
                 </div>
                 <div class="score">
-                    {{ rest.coins }}
+                    {{ rest.coins_before_freeze }}
                 </div>
             </div>
             {% endfor %}

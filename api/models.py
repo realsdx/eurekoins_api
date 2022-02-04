@@ -3,6 +3,11 @@ from django.utils import timezone
 from datetime import datetime
 import uuid
 
+class FreezeTime(models.Model):
+    freeze_time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return "Freeze Time"
 
 class Coupon(models.Model):
     code = models.CharField(max_length=128, unique=True)
@@ -49,6 +54,7 @@ class ApiUser(models.Model):
     name = models.CharField(max_length=512)
     email = models.EmailField(unique=True)
     coins = models.PositiveIntegerField(default=0)
+    coins_before_freeze = models.PositiveIntegerField(default=0)
     invite_code = models.CharField(max_length=16, unique=True)
     refered_invite_code = models.CharField(max_length=16, blank=True, null=True)
     image = models.URLField(blank=True, null=True) 
@@ -60,7 +66,11 @@ class ApiUser(models.Model):
 
     def __str__(self):
         return self.email
-
+    
+    def save(self, *args, **kwargs):
+        if timezone.now() <= FreezeTime.objects.first().freeze_time:
+            self.coins_before_freeze = self.coins
+        super(ApiUser, self).save(*args, **kwargs)
 
 class Transaction(models.Model):
     amount = models.IntegerField()
@@ -81,8 +91,3 @@ class Config(models.Model):
     def __str__(self):
         return "Project Settings"
 
-class FreezeTime(models.Model):
-    freeze_time = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return "Freeze Time"
